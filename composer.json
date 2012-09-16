@@ -1,0 +1,23 @@
+{
+	"name": "Primal/Routing",
+	"description": "A file based url routing engine",
+	"homepage": "http://github.com/Primal/Routing",
+	"license": "MIT",
+	"keywords": ["url", "routing", "controller"],
+	"authors": [
+		{
+			"name": "Jarvis Badgley",
+			"homepage": "http://chipersoft.com",
+			"email": "primal@chipersoft.com"
+		}
+	],
+	"require": {
+		"php": ">=5.3.10"
+	},
+	"type": "library",
+	"autoload": {
+        "psr-0": {
+            "Primal\\Routing": "lib\/"
+        }
+    }
+}
