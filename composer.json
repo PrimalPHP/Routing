@@ -1,7 +1,7 @@
 {
 	"name": "Primal/Routing",
 	"description": "A file based url routing engine",
-	"homepage": "http://github.com/Primal/Routing",
+	"homepage": "http://github.com/PrimalPHP/Routing",
 	"license": "MIT",
 	"keywords": ["url", "routing", "controller"],
 	"authors": [
