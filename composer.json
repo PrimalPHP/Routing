@@ -1,5 +1,5 @@
 {
-	"name": "Primal/Routing",
+	"name": "primal/routing",
 	"description": "A file based url routing engine",
 	"homepage": "http://github.com/PrimalPHP/Routing",
 	"license": "MIT",
@@ -19,5 +19,10 @@
         "psr-0": {
             "Primal\\Routing": "lib\/"
         }
-    }
+    },
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.0"
+		}
+	}
 }
