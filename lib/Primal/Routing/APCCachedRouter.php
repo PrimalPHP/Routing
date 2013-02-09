@@ -19,7 +19,7 @@ class APCCachedRouter extends DeepRouter {
 	protected $cache_duration = 60;
 	
 	/**
-	 * Sets the search path for finding route files
+	 * Sets the search path for finding route files. Overrides DeepRouter->setRoutesPath
 	 *
 	 * @param string $path 
 	 * @return $this
@@ -31,14 +31,15 @@ class APCCachedRouter extends DeepRouter {
 			$this->routes = apc_fetch($this->apc_key);
 		}
 		
+		$this->routes_path = $path;
 		if ($this->routes === false) {
-			parent::setRoutesPath($path);
+			$this->loadRoutes();
 		}
 		return $this;
 	}
 	
 	/**
-	 * Internal function for loading available routes, overwritten to add cached storage
+	 * Internal function for loading available routes, overwritten to add cached storage. Overrides DeepRouter->loadRoutes
 	 *
 	 * @return void
 	 */

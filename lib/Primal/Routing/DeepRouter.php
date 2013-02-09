@@ -15,13 +15,13 @@ class DeepRouter extends Router {
 		
 		
 	/**
-	 * Sets the search path for finding route files
+	 * Sets the search path for finding route files. Overrides Routers->setRoutesPath
 	 *
 	 * @param string $path The file path to use for loading routes
 	 * @return $this
 	 */
 	function setRoutesPath($path) {
-		parent::setRoutesPath($path);
+		$this->routes_path = $path;
 		$this->loadRoutes();
 		return $this;
 	}
