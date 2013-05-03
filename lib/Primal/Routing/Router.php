@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Primal\Routing;
 use \Exception;
@@ -14,17 +14,17 @@ class Router {
 
 	public $original_url;
 	public $original_chunks;
-	
+
 	public $map;
 	public $chunks;
-	
+
 	public $route_name;
 	public $route_file;
 	public $original_route;
-	
+
 	public $arguments;
-	
-	
+
+
 	/**
 	 * Class constructor
 	 *
@@ -38,7 +38,7 @@ class Router {
 			else $this->parseURL($url)->run();
 		}
 	}
-	
+
 	/**
 	 * Static shortcut for initializing a new Router object with chaining.  Not an actual singleton, but named such for consistency with other Primal classes
 	 *
@@ -49,20 +49,20 @@ class Router {
 	static function Singleton($path = null, $url = null) {
 		return new static($path, $url);
 	}
-	
-	
+
+
 	/**
 	 * Sets the search path for finding route files
 	 *
-	 * @param string $path 
+	 * @param string $path
 	 * @return $this
 	 */
 	function setRoutesPath($path) {
 		$this->routes_path = realpath($path);
 		return $this;
 	}
-	
-	
+
+
 	/**
 	 * Disable default behavior of excluding any value paired arguments from the integer indexes when building the arguments array
 	 *
@@ -73,8 +73,8 @@ class Router {
 		$this->filter_paired_arguments = !$yes;
 		return $this;
 	}
-	
-	
+
+
 	/**
 	 * Add every argument as a key when building the arguments table, regardless of if a paired value is defined.
 	 *
@@ -85,12 +85,12 @@ class Router {
 		$this->pair_all_arguments = $yes;
 		return $this;
 	}
-	
-	
+
+
 	/**
 	 * Overwrites the default site index route ("index") with the supplied name.
 	 *
-	 * @param string $name 
+	 * @param string $name
 	 * @return $this
 	 */
 	function setSiteIndex($name) {
@@ -102,7 +102,7 @@ class Router {
 	/**
 	 * Overwrites the default site page not found route ("404") with the supplied name.
 	 *
-	 * @param string $index 
+	 * @param string $index
 	 * @return $this
 	 */
 	function setNotFound($name) {
@@ -114,7 +114,7 @@ class Router {
 	/**
 	 * Overwrites the default catchall route ("_catchall") with the supplied name.
 	 *
-	 * @param string $index 
+	 * @param string $index
 	 * @return $this
 	 */
 	function setCatchAll($name) {
@@ -122,29 +122,29 @@ class Router {
 		return $this;
 	}
 
-	
+
 	/**
 	 * Parses the passed url and finds the relevant route file.
 	 *
-	 * @param string $url 
+	 * @param string $url
 	 * @return $this
 	 */
 	public function parseURL($url) {
 		if (!$this->routes_path || !file_exists($this->routes_path) || !is_dir($this->routes_path)) throw new Exception("Routes directory does not exist or is undefined.");
-		
+
 		$this->original_url = parse_url($url, PHP_URL_PATH);  //grab only the path argument, ignoring the domain, query or fragments
 
 		$arr = explode('/',$this->original_url); //split the path by the slashes
 
 		array_shift($arr); //and strip the first value (which is always empty)
 
-		$chunks = $this->original_chunks = $arr;  
-		
+		$chunks = $this->original_chunks = $arr;
+
 		$named_args = array();
 		$ordered_args = array();
 		foreach ($chunks as $index => $chunk) {
 			if ($chunk==='') continue;
-			
+
 			//if the chunk contains an equals sign, split it as a named argument and store the value.
 			if (($eqpos = strpos($chunk,'=')) !== false) {
 				$data = substr($chunk, $eqpos+1);
@@ -153,21 +153,21 @@ class Router {
 			} elseif ($this->pair_all_arguments) {
 				$named_args[$chunk] = '';
 			}
-			
+
 			if ($chunk !== '') $this->map[$chunk] = $index;
 			$ordered_args[] = $chunk;
 		}
-		
+
 		//save the original list incase the developer needs it.
 		$this->chunks = $ordered_args;
-		
+
 		//if the arguments array is empty, then this is a request to the site index
 		if (!count(array_filter($ordered_args))) {
 			$ordered_args = array($this->index_name);
-		}			
-		
+		}
+
 		list($route_name, $route_path, $arguments) = $this->findRoute($ordered_args);
-		
+
 		//if no route match was found, look for a catchall route. if no catchall, send to 404.
 		if ($route_path === null && $arguments === null) {
 			if (file_exists($this->routes_path .'/'. $this->catchall_name)) {
@@ -179,24 +179,24 @@ class Router {
 			}
 			$arguments = $ordered_args;
 		}
-		
+
 		//remove any named arguments from the list
 		if ($this->filter_paired_arguments) $arguments = array_diff($arguments, array_keys($named_args));
-		
+
 		//re-combine with named args to produce the indexed arguments collection
 		$arguments = array_merge($arguments, $named_args);
 
 		//url decode all argument values
 		array_walk($arguments, function (&$item, $key) {$item = urldecode($item);});
-		
+
 		$this->route_name = $this->original_route = $route_name;
 		$this->route_file = $route_path;
 		$this->arguments = $arguments;
-		
+
 		return $this;
 	}
-	
-	
+
+
 	/**
 	 * Parses the current page request URL and finds the relevant route file
 	 *
@@ -205,12 +205,12 @@ class Router {
 	public function parseCurrentRequest() {
 		return $this->parseURL($_SERVER['REQUEST_URI']);
 	}
-	
-	
+
+
 	/**
 	 * Searches routes folder for a file that matches the named arguments list
 	 *
-	 * @param array $arguments 
+	 * @param array $arguments
 	 * @return array Returns a tuple containing the route name and the remaining arguments.
 	 */
 	protected function findRoute($arguments) {
@@ -221,23 +221,23 @@ class Router {
 		$chunks = $arguments;
 		$found = false;
 		while (!empty($chunks)) {
-			
+
 			$route_name = implode('.',$chunks);
 
 			if ($found = $this->checkRoute($route_name)) break;
-		
+
 			array_pop($chunks);
 		}
-		
+
 		//separate the route name from the arguments list
 		array_splice($arguments,0, count($chunks));
-		
+
 		//if we found a route, return it.  Otherwise return false.
 		if ($found) return array($route_name, $found, $arguments);
 		else return false;
-		
+
 	}
-	
+
 	/**
 	 * Internal function to test if a route exists.
 	 *
@@ -248,8 +248,8 @@ class Router {
 		$path = $this->routes_path . "/{$name}.php";
 		return file_exists($path) ? $path : false;
 	}
-	
-	
+
+
 	/**
 	 * Runs the current route
 	 *
@@ -257,17 +257,17 @@ class Router {
 	 */
 	public function run() {
 		if (!file_exists($this->route_file)) throw new Exception('Route file does not exist: '.$this->route_file);
-		
+
 		$closure = function ($route, $arguments) {
 			include $route->route_file;
 		};
-		
-		$closure($this, $this->arguments);		
-		
+
+		$closure($this, $this->arguments);
+
 		return $this;
 	}
-	
-	
+
+
 	/**
 	 * Reroutes the request to the specified route.
 	 *
@@ -282,23 +282,23 @@ class Router {
 		}
 
 		return $this->run();
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Rewrites the original url using the named values passed in an array.
 	 *
-	 * @param array $values 
+	 * @param array $values
 	 * @return string The new url
 	 */
 	public function rewriteURL($values) {
-		
+
 		$chunks = $this->original_chunks;
-		
+
 		foreach ($values as $key => $value) {
-			
-			//generate the new chunk. 
+
+			//generate the new chunk.
 			if ($value === null) {
 				//If value is null, the chunk is the key name
 				$chunk = $key;
@@ -309,7 +309,7 @@ class Router {
 				//otherwise, the chunk is the key name paired with the urlencoded value
 				$chunk = $key."=".urlencode($value);
 			}
-		
+
 			//if the key exists in the previous url, replace it with the new value.
 			//otherwise append to the end of the url
 			if (isset($this->map[$key])) {
@@ -317,15 +317,15 @@ class Router {
 			} else {
 				$chunks[] = $chunk;
 			}
-			
+
 		}
-		
+
 		//remove any null chunks
 		$chunks = array_filter($chunks, function ($item) {return $item!==null && $item!=='';});
-		
+
 		return '/'.implode('/', $chunks);
-		
+
 	}
-	
+
 }
 

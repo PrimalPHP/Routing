@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Primal\Routing;
 
@@ -10,10 +10,12 @@ namespace Primal\Routing;
  */
 
 class DeepRouter extends Router {
-	
+
 	protected $routes = false;
-		
-		
+
+	protected $route_file_types = array('php', 'html');
+
+
 	/**
 	 * Sets the search path for finding route files. Overrides Routers->setRoutesPath
 	 *
@@ -25,7 +27,7 @@ class DeepRouter extends Router {
 		$this->loadRoutes();
 		return $this;
 	}
-	
+
 	/**
 	 * Scans the routes directory contents, generating a map of all available routes
 	 *
@@ -33,22 +35,22 @@ class DeepRouter extends Router {
 	 */
 	protected function loadRoutes() {
 		$this->routes = array();
-		
+
 		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->routes_path), \RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($iterator as $file) {
-			if (in_array($file->getExtension(), array('php','html'))) {
+			if (in_array($file->getExtension(), $this->route_file_types)) {
 				$path = str_replace($this->routes_path, '', $file->getPath());
 				$path = str_replace('/','.',$path);
 				$path = $path . '.' . $file->getBasename('.'.$file->getExtension());
-				$path = substr($path,1);			
-				
+				$path = substr($path,1);
+
 				$this->routes[ $path ] = (string)$file;
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Internal function to test if a route exists.
 	 *
@@ -58,7 +60,7 @@ class DeepRouter extends Router {
 	protected function checkRoute($name) {
 		return isset($this->routes[$name]) ? $this->routes[$name] : false;
 	}
-	
+
 	/**
 	 * Reroutes the request to the specified route.
 	 *
@@ -77,8 +79,8 @@ class DeepRouter extends Router {
 		}
 
 		return $this->run();
-		
+
 	}
-	
-	
+
+
 }
