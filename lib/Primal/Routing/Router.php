@@ -5,8 +5,8 @@ use \Exception;
 
 class Router {
 	protected $routes_path;
-	protected $filter_paired_arguments = true;
-	protected $pair_all_arguments = false;
+	protected $filter_paired_arguments = false;
+	protected $pair_all_arguments = true;
 
 	protected $index_name = 'index';
 	protected $catchall_name = '_catchall';
@@ -63,25 +63,25 @@ class Router {
 
 
 	/**
-	 * Disable default behavior of excluding any value paired arguments from the integer indexes when building the arguments array
+	 * Filters url segments with value pairs from the indexed arguments array
 	 *
 	 * @param boolean $yes optional
 	 * @return $this
 	 */
-	function indexPairedArguments($yes = true) {
-		$this->filter_paired_arguments = !$yes;
+	function enablePairedArgumentFiltering($yes = true) {
+		$this->filter_paired_arguments = $yes;
 		return $this;
 	}
 
 
 	/**
-	 * Add every argument as a key when building the arguments table, regardless of if a paired value is defined.
+	 * Filters url segments without values out of the named arguments array
 	 *
 	 * @param boolean $yes optional
 	 * @return $this
 	 */
-	function pairAllArguments($yes = true) {
-		$this->pair_all_arguments = $yes;
+	function enableEmptyArgumentFiltering($yes = true) {
+		$this->pair_all_arguments = !$yes;
 		return $this;
 	}
 
