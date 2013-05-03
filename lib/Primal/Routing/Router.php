@@ -31,23 +31,22 @@ class Router {
 	 * @param string $path optional Path to the routes folder
 	 * @param string|true $url optional URL to immediately parse and execute. If passed `true`, will parse the page request URL instead.
 	 */
-	function __construct($path = null, $url = null) {
+	function __construct($path = null, $index = null, $notfound = null, $catchall = null) {
 		if ($path !== null) $this->setRoutesPath($path);
-		if ($url !== null) {
-			if ($url === true) $this->parseCurrentRequest()->run();
-			else $this->parseURL($url)->run();
-		}
+		if ($index !== null) $this->setSiteIndex($index);
+		if ($notfound !== null) $this->set404($notfound);
+		if ($catchall !== null) $this->setCatchAll($catchall);
 	}
 
 	/**
-	 * Static shortcut for initializing a new Router object with chaining.  Not an actual singleton, but named such for consistency with other Primal classes
+	 * Static shortcut for initializing a new Router object with chaining.
 	 *
 	 * @param string $path optional Path to the routes folder
 	 * @param string|true $url optional URL to immediately parse and execute. If passed `true`, will parse the page request URL instead.
 	 * @return $this
 	 */
-	static function Singleton($path = null, $url = null) {
-		return new static($path, $url);
+	static function Create($path = null, $index = null, $notfound = null, $catchall = null) {
+		return new static($path, $index, $notfound, $catchall);
 	}
 
 
