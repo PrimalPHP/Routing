@@ -143,7 +143,9 @@ class Router {
 	 * @return $this
 	 */
 	public function parseURL($url) {
-		if (!$this->routes_path || !file_exists($this->routes_path) || !is_dir($this->routes_path)) throw new Exception("Routes directory does not exist or is undefined.");
+		if (!$this->validateRoutesPath($this->routes_path)) {
+			throw new Exception("Routes directory does not exist or is undefined.");
+		}
 
 		//grab only the path argument, ignoring the domain, query or fragments
 		$this->original_url = parse_url($url, PHP_URL_PATH);
@@ -229,6 +231,14 @@ class Router {
 		return array($indexed_segments, $named_segments);
 	}
 
+
+	/**
+	 * Verifies that the routes folder exists
+	 * @param  string $path Path to the routes folder
+	 * @return boolean
+	 */
+	protected function _validateRoutesPath($path) {
+		return $path && file_exists($path) && is_dir($path);
 	}
 
 
