@@ -156,23 +156,9 @@ class Router {
 
 		$segments = $this->original_segments = $split;
 
-		$named_args = array();
-		$ordered_args = array();
-		foreach ($chunks as $index => $chunk) {
-			if ($chunk==='') continue;
+		//process the segments for values
+		list($indexed_segments, $named_segments) = $this->_processSegments($segments);
 
-			//if the chunk contains an equals sign, split it as a named argument and store the value.
-			if (($eqpos = strpos($chunk,'=')) !== false) {
-				$data = substr($chunk, $eqpos+1);
-				$chunk = substr($chunk, 0, $eqpos);
-				$named_args[$chunk] = $data;
-			} elseif ($this->pair_all_arguments) {
-				$named_args[$chunk] = '';
-			}
-
-			if ($chunk !== '') $this->map[$chunk] = $index;
-			$ordered_args[] = $chunk;
-		}
 
 		//save the original list incase the developer needs it.
 		$this->segments = $indexed_segments;
@@ -213,6 +199,35 @@ class Router {
 		return $this;
 	}
 
+	/**
+	 * Processes the url segments, separating out paired values
+	 * @param  Array $segments
+	 * @return Array Tuple of the indexed and named segments.
+	 */
+	protected function _processSegments($segments) {
+		$named_segments = array();
+		$indexed_segments = array();
+		foreach ($segments as $index => $segment) {
+			//first make sure this wasn't an empty chunk (eg: /foo//bar/)
+			if ($segment==='') continue;
+
+			//if the segment contains an equals sign, split it as a named argument and store the value.
+			if (($delimiter_position = strpos($segment,'=')) !== false) {
+				$value = substr($segment, $delimiter_position+1);
+				$segment = substr($segment, 0, $delimiter_position);
+				$named_segments[$segment] = $value;
+			} elseif ($this->pair_all_arguments) {
+				//config says to include all segments, so add this with a null value
+				$named_segments[$segment] = null;
+			}
+
+			if ($segment !== '') {
+				$this->map[$segment] = $index;
+			}
+			$indexed_segments[] = $segment;
+		}
+		return array($indexed_segments, $named_segments);
+	}
 
 	}
 
