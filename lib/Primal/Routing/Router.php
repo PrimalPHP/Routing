@@ -121,6 +121,20 @@ class Router {
 		return $this;
 	}
 
+/**
+
+ */
+
+
+	/**
+	 * Parses the current page request URL and finds the relevant route file
+	 *
+	 * @return $this
+	 */
+	public function parseCurrentRequest() {
+		return $this->parseURL($_SERVER['REQUEST_URI']);
+	}
+
 
 	/**
 	 * Parses the passed url and finds the relevant route file.
@@ -196,13 +210,6 @@ class Router {
 	}
 
 
-	/**
-	 * Parses the current page request URL and finds the relevant route file
-	 *
-	 * @return $this
-	 */
-	public function parseCurrentRequest() {
-		return $this->parseURL($_SERVER['REQUEST_URI']);
 	}
 
 
