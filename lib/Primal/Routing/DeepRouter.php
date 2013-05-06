@@ -29,15 +29,30 @@ class DeepRouter extends Router {
 	}
 
 	/**
+	 * Adds a single route to the route map
+	 * @param string $name Route name (eg alpha.beta.charley)
+	 * @param string $path Absolute path to the route file
+	 * @return $this
+	 */
+	function addRoute($name, $path) {
+		$this->routes[ $name ] = $path;
+		return $this;
+	}
+
+	/**
 	 * Scans the routes directory contents, generating a map of all available routes
 	 *
-	 * @return void
+	 * @param Array $files Collection of SplFileInfo objects pointing at route files
+	 * @return $this
 	 */
-	protected function loadRoutes() {
+	protected function loadRoutes($files = null) {
 		$this->routes = array();
 
-		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->routes_path), \RecursiveIteratorIterator::SELF_FIRST);
-		foreach ($iterator as $file) {
+		if ($files === null) {
+			$files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->routes_path), \RecursiveIteratorIterator::SELF_FIRST);
+		}
+
+		foreach ($files as $file) {
 			if (in_array($file->getExtension(), $this->route_file_types)) {
 				$path = str_replace($this->routes_path, '', $file->getPath());
 				$path = str_replace('/','.',$path);
@@ -49,6 +64,7 @@ class DeepRouter extends Router {
 
 		}
 
+		return $this;
 	}
 
 	/**
@@ -57,7 +73,7 @@ class DeepRouter extends Router {
 	 * @param string $name Name of the route
 	 * @return boolean
 	 */
-	protected function checkRoute($name) {
+	protected function _checkRoute($name) {
 		return isset($this->routes[$name]) ? $this->routes[$name] : false;
 	}
 
@@ -67,18 +83,18 @@ class DeepRouter extends Router {
 	 * @param string $new_route Name of the new route
 	 * @return $this
 	 */
-	public function reroute($new_route = null) {
+	public function reroute($original_route, $new_route = null) {
 
 		if ($new_route !== null) {
-			if ($found = $this->checkRoute($new_route)) {
-				$this->route_name = $new_route;
-				$this->route_file = $found;
+			if ($found = $this->_checkRoute($new_route)) {
+				$original_route->name = $new_route;
+				$original_route->file = $found;
 			} else {
 				throw new Exception('Route could not be found: '.$new_route);
 			}
 		}
 
-		return $this->run();
+		return $original_route->run();
 
 	}
 
