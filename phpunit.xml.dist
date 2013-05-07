@@ -1,0 +1,11 @@
+<phpunit bootstrap="vendor/autoload.php">
+    <testsuites>
+      <testsuite name="Primal Routing">
+        <directory suffix="Test.php">tests</directory>
+      </testsuite>
+    </testsuites>
+
+    <logging>
+    	<log type="coverage-html" target="report" charset="UTF-8" highlight="false" />
+    </logging>
+</phpunit>
