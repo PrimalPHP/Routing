@@ -115,7 +115,7 @@ class Router {
 	 *
 	 * @return $this
 	 */
-	public function parseCurrentRequest($route_object = '/Primal/Routing/Route') {
+	public function parseCurrentRequest($route_object = '\Primal\Routing\Route') {
 		return $this->parseURL($_SERVER['REQUEST_URI'], $route_object);
 	}
 
@@ -126,7 +126,7 @@ class Router {
 	 * @param string $url
 	 * @return $this
 	 */
-	public function parseURL($url, $route_object = '/Primal/Routing/Route') {
+	public function parseURL($url, $route_object = '\Primal\Routing\Route') {
 		if (!$this->_validateRoutesPath($this->routes_path)) {
 			throw new Exception("Routes directory does not exist or is undefined.");
 		}
