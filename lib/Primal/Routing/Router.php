@@ -6,7 +6,7 @@ use \Exception;
 class Router {
 	protected $routes_path;
 	protected $filter_paired_arguments = false;
-	protected $pair_all_arguments = true;
+	protected $pair_all_arguments = false;
 
 	protected $index_route = 'index';
 	protected $catchall_route = '_catchall';
@@ -56,8 +56,8 @@ class Router {
 	 * @param boolean $yes optional
 	 * @return $this
 	 */
-	function enableEmptyArgumentFiltering($yes = true) {
-		$this->pair_all_arguments = !$yes;
+	function enableEmptySegmentInclusion($yes = true) {
+		$this->pair_all_arguments = $yes;
 		return $this;
 	}
 
