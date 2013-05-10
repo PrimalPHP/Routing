@@ -11,7 +11,7 @@ class Route {
 	public $arguments = array();
 	public $parameters = array();
 	public $map = array();
-	public $origin = null;
+	public $origin = false;
 
 	public function __construct($config) {
 		foreach ($config as $key => $value) {
