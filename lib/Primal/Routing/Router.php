@@ -10,7 +10,7 @@ class Router {
 
 	protected $index_route = 'index';
 	protected $catchall_route = '_catchall';
-	protected $notfound_route = '404';
+	protected $notfound_route = '_notfound';
 
 	protected $route;
 
