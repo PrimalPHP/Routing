@@ -22,11 +22,22 @@ class Route {
 	}
 
 	public function __invoke() {
-		$this->run();
+		$this->execute(true);
 	}
 
-	public function run() {
-		include $this->path;
+	public function execute($returns = false) {
+		ob_start();
+		$result = require($this->path);
+		if ($returns) {
+			ob_clean();
+			return $result;
+		} else {
+			return ob_get_clean();
+		}
+	}
+
+	public function passthru() {
+		require $this->path;
 	}
 
 	/**
